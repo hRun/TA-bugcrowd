@@ -22,3 +22,8 @@ api.bugcrowd.com does currently not return the timestamps of submissions' state 
 
 Add Bugcrowd logo after consent.
 
+Potentially add showcase dashboard.
+
+Add field mapping and event type mapping to CIM "Vulnerability" data model.
+
+Add open source license.
