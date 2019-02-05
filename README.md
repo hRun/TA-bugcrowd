@@ -1,6 +1,6 @@
 # TA-bugcrowd
 
-A Splunk add-on providing a modular input for cyclically retrieving submissions from your Bugcrowd programs, creating a Splunk event for each new or updated submission.
+A Splunk® add-on providing a modular input for cyclically retrieving submissions from your Bugcrowd programs, creating a Splunk event for each new or updated submission.
 
 Created using the Splunk Add-On builder.
 
