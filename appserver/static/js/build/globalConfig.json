@@ -1,0 +1,331 @@
+{
+    "meta": {
+        "name": "TA-bugcrowd", 
+        "apiVersion": "3.0.0", 
+        "version": "1.0.0", 
+        "restRoot": "TA_bugcrowd", 
+        "displayName": "Splunk Add-On for Bugcrowd"
+    }, 
+    "pages": {
+        "configuration": {
+            "title": "Configuration", 
+            "tabs": [
+                {
+                    "name": "proxy", 
+                    "title": "Proxy", 
+                    "options": {
+                        "saveValidator": "function(formData) { if(!formData.proxy_enabled || formData.proxy_enabled === '0') {return true; } if(!formData.proxy_url) { return 'Proxy Host can not be empty'; } if(!formData.proxy_port) { return 'Proxy Port can not be empty'; } return true; }"
+                    }, 
+                    "entity": [
+                        {
+                            "label": "Enable", 
+                            "type": "checkbox", 
+                            "field": "proxy_enabled"
+                        }, 
+                        {
+                            "label": "Proxy Type", 
+                            "type": "singleSelect", 
+                            "options": {
+                                "disableSearch": true, 
+                                "autoCompleteFields": [
+                                    {
+                                        "label": "http", 
+                                        "value": "http"
+                                    }, 
+                                    {
+                                        "label": "socks4", 
+                                        "value": "socks4"
+                                    }, 
+                                    {
+                                        "label": "socks5", 
+                                        "value": "socks5"
+                                    }
+                                ]
+                            }, 
+                            "field": "proxy_type", 
+                            "defaultValue": "http"
+                        }, 
+                        {
+                            "label": "Host", 
+                            "type": "text", 
+                            "validators": [
+                                {
+                                    "errorMsg": "Max host length is 4096", 
+                                    "type": "string", 
+                                    "minLength": 0, 
+                                    "maxLength": 4096
+                                }
+                            ], 
+                            "field": "proxy_url"
+                        }, 
+                        {
+                            "label": "Port", 
+                            "type": "text", 
+                            "validators": [
+                                {
+                                    "type": "number", 
+                                    "range": [
+                                        1, 
+                                        65535
+                                    ]
+                                }
+                            ], 
+                            "field": "proxy_port"
+                        }, 
+                        {
+                            "label": "Username", 
+                            "type": "text", 
+                            "validators": [
+                                {
+                                    "errorMsg": "Max length of username is 50", 
+                                    "type": "string", 
+                                    "minLength": 0, 
+                                    "maxLength": 50
+                                }
+                            ], 
+                            "field": "proxy_username"
+                        }, 
+                        {
+                            "label": "Password", 
+                            "type": "text", 
+                            "validators": [
+                                {
+                                    "errorMsg": "Max length of password is 8192", 
+                                    "type": "string", 
+                                    "minLength": 0, 
+                                    "maxLength": 8192
+                                }
+                            ], 
+                            "encrypted": true, 
+                            "field": "proxy_password"
+                        }, 
+                        {
+                            "label": "Remote DNS resolution", 
+                            "type": "checkbox", 
+                            "field": "proxy_rdns"
+                        }
+                    ]
+                }, 
+                {
+                    "name": "logging", 
+                    "title": "Logging", 
+                    "entity": [
+                        {
+                            "label": "Log level", 
+                            "type": "singleSelect", 
+                            "options": {
+                                "disableSearch": true, 
+                                "autoCompleteFields": [
+                                    {
+                                        "label": "DEBUG", 
+                                        "value": "DEBUG"
+                                    }, 
+                                    {
+                                        "label": "INFO", 
+                                        "value": "INFO"
+                                    }, 
+                                    {
+                                        "label": "WARNING", 
+                                        "value": "WARNING"
+                                    }, 
+                                    {
+                                        "label": "ERROR", 
+                                        "value": "ERROR"
+                                    }, 
+                                    {
+                                        "label": "CRITICAL", 
+                                        "value": "CRITICAL"
+                                    }
+                                ]
+                            }, 
+                            "field": "loglevel", 
+                            "defaultValue": "INFO"
+                        }
+                    ]
+                }
+            ], 
+            "description": "Set up your add-on"
+        }, 
+        "inputs": {
+            "title": "Inputs", 
+            "services": [
+                {
+                    "name": "bugcrowd_api", 
+                    "title": "Bugcrowd API", 
+                    "entity": [
+                        {
+                            "help": "Enter a unique name for the data input", 
+                            "required": true, 
+                            "label": "Name", 
+                            "type": "text", 
+                            "validators": [
+                                {
+                                    "errorMsg": "Input Name must start with a letter and followed by alphabetic letters, digits or underscores.", 
+                                    "type": "regex", 
+                                    "pattern": "^[a-zA-Z]\\w*$"
+                                }, 
+                                {
+                                    "errorMsg": "Length of input name should be between 1 and 100", 
+                                    "type": "string", 
+                                    "minLength": 1, 
+                                    "maxLength": 100
+                                }
+                            ], 
+                            "field": "name"
+                        }, 
+                        {
+                            "help": "Time interval of input in seconds.", 
+                            "required": true, 
+                            "label": "Interval", 
+                            "type": "text", 
+                            "validators": [
+                                {
+                                    "errorMsg": "Interval must be an integer.", 
+                                    "type": "regex", 
+                                    "pattern": "^\\-[1-9]\\d*$|^\\d*$"
+                                }
+                            ], 
+                            "field": "interval"
+                        }, 
+                        {
+                            "field": "index", 
+                            "required": true, 
+                            "defaultValue": "default", 
+                            "label": "Index", 
+                            "type": "singleSelect", 
+                            "validators": [
+                                {
+                                    "errorMsg": "Length of index name should be between 1 and 80.", 
+                                    "type": "string", 
+                                    "minLength": 1, 
+                                    "maxLength": 80
+                                }
+                            ], 
+                            "options": {
+                                "endpointUrl": "data/indexes", 
+                                "createSearchChoice": true, 
+                                "blackList": "^_.*$"
+                            }
+                        }, 
+                        {
+                            "help": "Your HTTP Authorization Header. E.g. abcdefg:AB1cdef2G-A3bc3deFG_AB_CDe-fg", 
+                            "field": "api_key", 
+                            "required": true, 
+                            "label": "API Key", 
+                            "type": "text", 
+                            "validators": [
+                                {
+                                    "errorMsg": "Max length of password is 8192", 
+                                    "type": "string", 
+                                    "minLength": 0, 
+                                    "maxLength": 8192
+                                }
+                            ], 
+                            "encrypted": true, 
+                            "options": {
+                                "placeholder": "*******"
+                            }
+                        }, 
+                        {
+                            "help": "New submissions to your programs will have state \"new\". This includes duplicates and non-applicable. Usually only submissions validated by Bugcrowd staff and set to state \"triaged\" are relevant to you", 
+                            "options": {
+                                "items": [
+                                    {
+                                        "label": "\"new\" state", 
+                                        "value": "nue"
+                                    }, 
+                                    {
+                                        "label": "\"triaged\" state", 
+                                        "value": "triaged"
+                                    }
+                                ]
+                            }, 
+                            "required": true, 
+                            "defaultValue": "triaged", 
+                            "label": "Pull submissions starting from", 
+                            "type": "radio", 
+                            "field": "starting_from"
+                        }, 
+                        {
+                            "help": "Whether or not to create a new Splunk event if a submission's state is changed on the CrowdControl platform", 
+                            "options": {
+                                "items": [
+                                    {
+                                        "label": "Yes", 
+                                        "value": "true"
+                                    }, 
+                                    {
+                                        "label": "No", 
+                                        "value": "false"
+                                    }
+                                ]
+                            }, 
+                            "required": true, 
+                            "defaultValue": "true", 
+                            "label": "Track submission state", 
+                            "type": "radio", 
+                            "field": "track_states"
+                        }
+                    ]
+                }
+            ], 
+            "description": "Manage your data inputs", 
+            "table": {
+                "actions": [
+                    "edit", 
+                    "enable", 
+                    "delete", 
+                    "clone"
+                ], 
+                "header": [
+                    {
+                        "label": "Name", 
+                        "field": "name"
+                    }, 
+                    {
+                        "label": "Interval", 
+                        "field": "interval"
+                    }, 
+                    {
+                        "label": "Index", 
+                        "field": "index"
+                    }, 
+                    {
+                        "label": "Status", 
+                        "field": "disabled"
+                    }
+                ], 
+                "moreInfo": [
+                    {
+                        "label": "Name", 
+                        "field": "name"
+                    }, 
+                    {
+                        "label": "Interval", 
+                        "field": "interval"
+                    }, 
+                    {
+                        "label": "Index", 
+                        "field": "index"
+                    }, 
+                    {
+                        "label": "Status", 
+                        "field": "disabled"
+                    }, 
+                    {
+                        "label": "API Key", 
+                        "field": "api_key"
+                    }, 
+                    {
+                        "label": "Pull submissions starting from", 
+                        "field": "starting_from"
+                    }, 
+                    {
+                        "label": "Track submission state", 
+                        "field": "track_states"
+                    }
+                ]
+            }
+        }
+    }
+}
