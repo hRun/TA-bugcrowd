@@ -173,6 +173,7 @@ def collect_events(helper, ew):
                 helper.save_check_point(submission['uuid'], submission['substate'])
 
                 # Strip irrelevant information
+                submission['submission_source'] = submission.pop('source', None)
                 submission.pop('vulnerability_references_markdown', None)
                 submission.pop('uuid', None)
                 submission.pop('vrt_version', None)
@@ -220,6 +221,7 @@ def collect_events(helper, ew):
                 helper.save_check_point(submission['uuid'], submission['substate'])
 
                 # Strip irrelevant information
+                submission['submission_source'] = submission.pop('source', None)
                 submission.pop('vulnerability_references_markdown', None)
                 submission.pop('uuid', None)
                 submission.pop('vrt_version', None)

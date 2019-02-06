@@ -24,6 +24,15 @@ Add Bugcrowd logo after consent.
 
 Potentially add showcase dashboard.
 
-Add field mapping and event type mapping to CIM "Vulnerability" data model.
-
 Add open source license.
+
+## History
+
+### v1.1.0
+
+- Added mapping to CIM "Vulnerability" data model as good as possible
+
+- Changed default visibility to true
+
+- Renamed "source" key to "submission_source" as it was causing conflicts with Splunk's source field
+
