@@ -28,9 +28,15 @@ Add open source license.
 
 ## History
 
+### v1.1.1
+
+- Added "dest" field extraction
+
+- Fixed timestamp recognition
+
 ### v1.1.0
 
-- Added mapping to CIM "Vulnerability" data model as good as possible
+- Added mapping to CIM "Vulnerabilities" data model as good as possible
 
 - Changed default visibility to true
 

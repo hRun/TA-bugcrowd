@@ -183,8 +183,8 @@ def collect_events(helper, ew):
                 submission['bounty'].pop('targets_overview_markdown', None)
                 submission['bounty'].pop('tagline', None)
 
-                # Add custom event time field at beginning for easier time recognition
-                if submission['substate'] == starting_from:
+                # Add custom event time field for easier time recognition
+                if submission['substate'] == 'nue':
                     submission['_time'] = submission['submitted_at']
                 # TODO Work with Bugcrowd to enable retrieval of submissions' change times via API
                 # Set current time for updated submission. This is as good as it gets for now
@@ -231,8 +231,8 @@ def collect_events(helper, ew):
                 submission['bounty'].pop('targets_overview_markdown', None)
                 submission['bounty'].pop('tagline', None)
 
-                # Add custom event time field at beginning for easier time recognition
-                if submission['substate'] == starting_from:
+                # Add custom event time field for easier time recognition
+                if submission['substate'] == 'nue':
                     submission['_time'] = submission['submitted_at']
                 # TODO Work with Bugcrowd to enable retrieval of submissions' change times via API
                 # Set current time for updated submission. This is as good as it gets for now
