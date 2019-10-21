@@ -154,7 +154,7 @@ def collect_events(helper, ew):
         if track_states == 'false':
             checkpoint = 0 if not helper.get_check_point(bounty) else helper.get_check_point(bounty)
 
-            response = helper.send_http_request('{0}/bounties/{1}/submissions?sort=newest&limit=9999&offset={2}&filter={3}'.format(url, bounty, checkpoint, str(starting_from)), \
+            response = helper.send_http_request('{0}/bounties/{1}/submissions?sort=newest&limit=2500&offset={2}&filter={3}'.format(url, bounty, checkpoint, str(starting_from)), \
                                                 'GET', parameters = None, payload = None, \
                                                 headers = {'Accept': 'application/vnd.bugcrowd+json', 'Authorization': 'Token {0}'.format(api_key)}, \
                                                 cookies = None, verify = True, cert = None, timeout = 60.0, use_proxy = True)
@@ -200,7 +200,7 @@ def collect_events(helper, ew):
                 ew.write_event(event)
 
         else:
-            response = helper.send_http_request('{0}/bounties/{1}/submissions?sort=newest&limit=9999'.format(url, bounty), \
+            response = helper.send_http_request('{0}/bounties/{1}/submissions?sort=newest&limit=2500'.format(url, bounty), \
                                                 'GET', parameters = None, payload = None, \
                                                 headers = {'Accept': 'application/vnd.bugcrowd+json', 'Authorization': 'Token {0}'.format(api_key)}, \
                                                 cookies = None, verify = True, cert = None, timeout = 60.0, use_proxy = True)
