@@ -1,3 +1,5 @@
+Important note: This version/branch of the app is deprecated and will no longer be supported.
+
 # TA-bugcrowd
 
 A Splunk® add-on providing a modular input for cyclically retrieving submissions from your Bugcrowd programs, creating a Splunk event for each new or updated submission.
