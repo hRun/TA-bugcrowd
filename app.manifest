@@ -1,7 +1,7 @@
 {
   "schemaVersion": "1.0.0",
   "info": {
-    "title": "Splunk Add-On for Bugcrowd",
+    "title": "Bugcrowd",
     "id": {
       "group": null,
       "name": "TA-bugcrowd",
