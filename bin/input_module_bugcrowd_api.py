@@ -207,53 +207,61 @@ def collect_events(helper, ew):
                 ew.write_event(event)
 
         else:
-            response = helper.send_http_request('{0}/bounties/{1}/submissions?sort=newest&limit=2500'.format(url, bounty), \
-                                                'GET', parameters = None, payload = None, \
-                                                headers = {'Accept': 'application/vnd.bugcrowd+json', 'Authorization': 'Token {0}'.format(api_key)}, \
-                                                cookies = None, verify = True, cert = None, timeout = 60.0, use_proxy = True)
+            offset = 0
+            limit = 2500
+            still_more_submissions = True
+            while still_more_submissions:
+                response = helper.send_http_request('{0}/bounties/{1}/submissions?sort=newest&limit={2}&offset={3}'.format(url, bounty, limit, offset), \
+                                                    'GET', parameters = None, payload = None, \
+                                                    headers = {'Accept': 'application/vnd.bugcrowd+json', 'Authorization': 'Token {0}'.format(api_key)}, \
+                                                    cookies = None, verify = True, cert = None, timeout = 60.0, use_proxy = True)
 
-            r_json = response.json()
-
-            for submission in r_json['submissions']:
-                # Check point handling to avoid duplicate events
-                checkpoint = 0 if not helper.get_check_point(submission['uuid']) else helper.get_check_point(submission['uuid'])
-
-                if submission['substate'] == checkpoint or checkpoint in closed_states:
-                    continue
-                if starting_from == 'triaged' and submission['substate'] == 'nue':
-                    continue
-                if starting_from == 'unresolved' and submission['substate'] in ['nue', 'triaged']:
-                    continue
-                if starting_from in ['triaged', 'unresolved'] and checkpoint == 0 and submission['substate'] in closed_states:
-                    continue
-
-                helper.save_check_point(submission['uuid'], submission['substate'])
-
-                # Strip irrelevant information
-                submission['submission_source'] = submission.pop('source', None)
-                submission.pop('vulnerability_references_markdown', None)
-                submission.pop('uuid', None)
-                submission.pop('vrt_version', None)
-                submission.pop('remediation_advice_markdown', None)
-                submission['bounty'].pop('uuid', None)
-                submission['bounty'].pop('description_markdown', None)
-                submission['bounty'].pop('targets_overview_markdown', None)
-                submission['bounty'].pop('tagline', None)
-
-                # Add custom event time field for easier time recognition
-                if submission['substate'] == 'nue':
-                    submission['_time'] = submission['submitted_at']
-                # TODO Work with Bugcrowd to enable retrieval of submissions' change times via API
-                # Set current time for updated submission. This is as good as it gets for now
+                r_json = response.json()
+                if r_json['meta']['count'] < limit:
+                    still_more_submissions = False
                 else:
-                    submission['_time'] = datetime.now().strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + "Z"
+                    offset = offset + limit
 
-                # Write Splunk event
-                event = helper.new_event(source = 'bugcrowd.com/{0}'.format(submission['bounty_code']), \
-                                         host = 'api.bugcrowd.com', \
-                                         index = helper.get_output_index(), \
-                                         sourcetype = helper.get_sourcetype(), \
-                                         data = json.dumps(submission))
-                ew.write_event(event)
+                for submission in r_json['submissions']:
+                    # Check point handling to avoid duplicate events
+                    checkpoint = 0 if not helper.get_check_point(submission['uuid']) else helper.get_check_point(submission['uuid'])
+
+                    if submission['substate'] == checkpoint or checkpoint in closed_states:
+                        continue
+                    if starting_from == 'triaged' and submission['substate'] == 'nue':
+                        continue
+                    if starting_from == 'unresolved' and submission['substate'] in ['nue', 'triaged']:
+                        continue
+                    if starting_from in ['triaged', 'unresolved'] and checkpoint == 0 and submission['substate'] in closed_states:
+                        continue
+
+                    helper.save_check_point(submission['uuid'], submission['substate'])
+
+                    # Strip irrelevant information
+                    submission['submission_source'] = submission.pop('source', None)
+                    submission.pop('vulnerability_references_markdown', None)
+                    submission.pop('uuid', None)
+                    submission.pop('vrt_version', None)
+                    submission.pop('remediation_advice_markdown', None)
+                    submission['bounty'].pop('uuid', None)
+                    submission['bounty'].pop('description_markdown', None)
+                    submission['bounty'].pop('targets_overview_markdown', None)
+                    submission['bounty'].pop('tagline', None)
+
+                    # Add custom event time field for easier time recognition
+                    if submission['substate'] == 'nue':
+                        submission['_time'] = submission['submitted_at']
+                    # TODO Work with Bugcrowd to enable retrieval of submissions' change times via API
+                    # Set current time for updated submission. This is as good as it gets for now
+                    else:
+                        submission['_time'] = datetime.now().strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + "Z"
+
+                    # Write Splunk event
+                    event = helper.new_event(source = 'bugcrowd.com/{0}'.format(submission['bounty_code']), \
+                                             host = 'api.bugcrowd.com', \
+                                             index = helper.get_output_index(), \
+                                             sourcetype = helper.get_sourcetype(), \
+                                             data = json.dumps(submission))
+                    ew.write_event(event)
 
     helper.log_info("Successfully retrieved and indexed new/updated Bugcrowd submissions.")
